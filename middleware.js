@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
 const allowedIps = process.env.ALLOWED_IPS?.split(',') || []
 
-function ipToLong(ip) {
+function ipToLong(ip: string) {
   return ip.split('.').reduce((acc, oct) => (acc << 8) + parseInt(oct), 0)
 }
 
-function ipInRange(ip, range) {
+function ipInRange(ip: string, range: string) {
   if (range.includes('/')) {
     const [base, bits] = range.split('/')
     const mask = ~(2 ** (32 - Number(bits)) - 1)
@@ -17,7 +18,7 @@ function ipInRange(ip, range) {
   return ip === range
 }
 
-export function middleware(req) {
+export function middleware(req: NextRequest) {
   const ip =
     req.ip ||
     req.headers.get('x-forwarded-for')?.split(',')[0] ||
