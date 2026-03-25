@@ -1,1 +1,94 @@
+# ========================
+# 🔐 ENV (SEGURANÇA)
+# ========================
 .env
+.env.*
+!.env.example
+
+backend/.env
+frontend/.env.local
+frontend/.env.development
+frontend/.env.production
+
+# ========================
+# 📦 NODE MODULES
+# ========================
+node_modules/
+**/node_modules/
+
+# ========================
+# 🧠 LOGS
+# ========================
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ========================
+# 🧹 CACHE
+# ========================
+.cache
+.next
+out
+dist
+build
+coverage
+
+# ========================
+# 🖥️ SISTEMA OPERACIONAL
+# ========================
+.DS_Store
+Thumbs.db
+
+# ========================
+# 💻 EDITORES
+# ========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ========================
+# 🐳 DOCKER
+# ========================
+docker-data/
+*.pid
+*.seed
+*.pid.lock
+
+# ========================
+# 📦 PACKAGE LOCK (opcional)
+# ========================
+# Se quiser versionar, comenta essa linha
+# package-lock.json
+
+# ========================
+# 🧪 TESTES
+# ========================
+coverage/
+
+# ========================
+# 🔥 NEXT BUILD
+# ========================
+frontend/.next/
+frontend/out/
+
+# ========================
+# 🔥 BACKEND BUILD
+# ========================
+backend/dist/
+
+# ========================
+# 🔑 CHAVES / SEGURANÇA
+# ========================
+*.pem
+*.key
+*.crt
+
+# ========================
+# 🗃️ TEMP FILES
+# ========================
+tmp/
+temp/

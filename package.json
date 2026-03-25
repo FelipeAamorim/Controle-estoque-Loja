@@ -1,5 +1,7 @@
 {
-  "name": "estoque",
-  "version": "1.0.0",
-  "private": true
+  "name": "loja-estoque",
+  "scripts": {
+    "dev": "docker-compose up --build",
+    "down": "docker-compose down"
+  }
 }
