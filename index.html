@@ -3,351 +3,748 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sistema de Estoque — Loja de Roupas</title>
+<title>Loja — Estoque</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:system-ui,sans-serif;background:#f5f5f3;color:#1a1a18;min-height:100vh;padding:1.5rem}
-  h1{font-size:20px;font-weight:600;margin-bottom:1.5rem;color:#1a1a18}
-  .tabs{display:flex;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap}
-  .tab{padding:9px 18px;border:1px solid #ccc;border-radius:8px;font-size:13px;cursor:pointer;background:#fff;color:#555}
-  .tab.active{background:#1a1a18;color:#fff;border-color:#1a1a18}
-  .tab:hover:not(.active){background:#eee}
-  .section{display:none}.section.active{display:block}
-  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:1.5rem}
-  .card{background:#fff;border-radius:10px;padding:1rem;border:1px solid #e0e0de}
-  .card .label{font-size:12px;color:#888;margin-bottom:4px}
-  .card .value{font-size:22px;font-weight:600;color:#1a1a18}
-  .raised{background:#fff;border:1px solid #e0e0de;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
-  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-  .form-row.tri{grid-template-columns:1fr 1fr 1fr}
-  @media(max-width:600px){.form-row,.form-row.tri{grid-template-columns:1fr}}
-  label{display:block;font-size:12px;color:#666;margin-bottom:4px}
-  input,select{width:100%;padding:9px 10px;border:1px solid #ccc;border-radius:8px;font-size:14px;background:#fff;color:#1a1a18;outline:none}
-  input:focus,select:focus{border-color:#888}
-  .btn{padding:9px 18px;border:1px solid #ccc;border-radius:8px;font-size:13px;cursor:pointer;background:#fff;color:#1a1a18}
-  .btn-primary{background:#1a1a18;color:#fff;border-color:#1a1a18}
-  .btn:hover{background:#eee}
-  .btn-primary:hover{background:#333}
-  .btn-danger{color:#c0392b;border-color:#e0b0ae}
-  .btn-danger:hover{background:#fdf0ef}
-  table{width:100%;border-collapse:collapse;font-size:13px}
-  th{text-align:left;padding:8px 10px;font-size:12px;font-weight:600;color:#888;border-bottom:1px solid #eee}
-  td{padding:9px 10px;border-bottom:1px solid #f0f0ee;color:#1a1a18}
-  tr:last-child td{border-bottom:none}
-  tr:hover td{background:#fafaf8}
-  .badge{display:inline-block;padding:3px 9px;border-radius:8px;font-size:11px;font-weight:600}
-  .badge-ok{background:#e6f4ea;color:#2e7d32}
-  .badge-low{background:#fff8e1;color:#f57f17}
-  .badge-out{background:#fdecea;color:#c62828}
-  .badge-in{background:#e3f2fd;color:#1565c0}
-  .search{width:100%;margin-bottom:1rem;padding:9px 12px;border:1px solid #ccc;border-radius:8px;font-size:14px;outline:none}
-  .search:focus{border-color:#888}
-  .empty{text-align:center;padding:2rem;color:#aaa;font-size:14px}
-  .flash{display:none;padding:10px 16px;border-radius:8px;margin-bottom:1rem;font-size:13px;font-weight:500}
-  .flash-ok{background:#e6f4ea;color:#2e7d32}
-  .flash-err{background:#fdecea;color:#c62828}
-  .section-title{font-size:15px;font-weight:600;margin-bottom:1rem;color:#1a1a18}
-  .row-actions{display:flex;gap:6px}
-  .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:8px}
-  .header-right{font-size:12px;color:#aaa}
+:root {
+  --bg: #0f0f0d;
+  --surface: #181816;
+  --surface2: #222220;
+  --border: #2e2e2a;
+  --border2: #3a3a36;
+  --text: #f0ede6;
+  --muted: #7a7a72;
+  --accent: #d4b896;
+  --accent2: #a8845e;
+  --green: #6fcf97;
+  --green-bg: #0e2318;
+  --yellow: #f2c94c;
+  --yellow-bg: #231e0a;
+  --red: #eb5757;
+  --red-bg: #250d0d;
+  --blue: #56b4f5;
+  --blue-bg: #091e33;
+  --radius: 10px;
+  --mono: 'DM Mono', monospace;
+  --sans: 'DM Sans', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 0;
+}
+
+/* LAYOUT */
+.app { display: flex; min-height: 100vh; }
+
+/* SIDEBAR */
+.sidebar {
+  width: 220px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 0;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 10;
+}
+.logo {
+  padding: 0 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1rem;
+}
+.logo-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+}
+.logo-sub {
+  font-size: 11px;
+  color: var(--muted);
+  font-family: var(--mono);
+  margin-top: 2px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 1.25rem;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  user-select: none;
+}
+.nav-item:hover { color: var(--text); background: var(--surface2); }
+.nav-item.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: rgba(212,184,150,0.06);
+}
+.nav-icon { font-size: 15px; width: 20px; text-align: center; }
+.sidebar-clock {
+  margin-top: auto;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* MAIN */
+.main {
+  margin-left: 220px;
+  flex: 1;
+  padding: 2rem 2.5rem;
+  max-width: calc(100vw - 220px);
+}
+.page-header {
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.page-title { font-size: 22px; font-weight: 600; color: var(--text); }
+.page-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
+
+/* CARDS */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.25rem;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent2), var(--accent));
+  opacity: 0.5;
+}
+.card-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-family: var(--mono); margin-bottom: 6px; }
+.card-value { font-size: 26px; font-weight: 600; color: var(--text); font-family: var(--mono); }
+.card-value.small { font-size: 18px; }
+
+/* PANEL */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+}
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  font-family: var(--mono);
+  margin-bottom: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.panel-title span { color: var(--accent); }
+
+/* FORM */
+.form-grid { display: grid; gap: 12px; margin-bottom: 14px; }
+.g2 { grid-template-columns: 1fr 1fr; }
+.g3 { grid-template-columns: 1fr 1fr 1fr; }
+@media(max-width:700px){.g2,.g3{grid-template-columns:1fr}.sidebar{display:none}.main{margin-left:0;max-width:100vw;padding:1rem}}
+.field label { display: block; font-size: 11px; color: var(--muted); font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 5px; }
+.field input, .field select {
+  width: 100%;
+  padding: 9px 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text);
+  font-family: var(--sans);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.field input:focus, .field select:focus { border-color: var(--accent2); }
+.field select option { background: var(--surface2); }
+
+/* BUTTONS */
+.btn {
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border2);
+  background: var(--surface2);
+  color: var(--text);
+  transition: all 0.15s;
+  font-family: var(--sans);
+}
+.btn:hover { border-color: var(--accent2); color: var(--accent); }
+.btn-primary { background: var(--accent); color: #0f0f0d; border-color: var(--accent); font-weight: 600; }
+.btn-primary:hover { background: #e8cdb0; color: #0f0f0d; }
+.btn-danger { color: var(--red); border-color: rgba(235,87,87,0.3); }
+.btn-danger:hover { background: var(--red-bg); }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+
+/* SEARCH */
+.search-input {
+  width: 100%;
+  padding: 9px 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text);
+  outline: none;
+  margin-bottom: 1rem;
+  font-family: var(--sans);
+  transition: border-color 0.15s;
+}
+.search-input:focus { border-color: var(--accent2); }
+
+/* TABLE */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th {
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-family: var(--mono);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,0.02); }
+
+/* BADGE */
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 600; font-family: var(--mono); white-space: nowrap; }
+.badge-ok { background: var(--green-bg); color: var(--green); }
+.badge-low { background: var(--yellow-bg); color: var(--yellow); }
+.badge-out { background: var(--red-bg); color: var(--red); }
+.badge-in { background: var(--blue-bg); color: var(--blue); }
+
+/* SECTION */
+.section { display: none; }
+.section.active { display: block; }
+
+/* FLASH */
+#flash {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  display: none;
+  z-index: 100;
+  max-width: 340px;
+  font-family: var(--sans);
+  border: 1px solid;
+  animation: slideup 0.2s ease;
+}
+@keyframes slideup { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+.flash-ok { background: var(--green-bg); color: var(--green); border-color: rgba(111,207,151,0.3); }
+.flash-err { background: var(--red-bg); color: var(--red); border-color: rgba(235,87,87,0.3); }
+
+/* LOADING */
+#db-loading {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 12px;
+  z-index: 200;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--muted);
+}
+.spinner { width: 24px; height: 24px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.empty { text-align: center; padding: 2.5rem; color: var(--muted); font-size: 13px; font-family: var(--mono); }
+.mono { font-family: var(--mono); }
+.filter-row { display: flex; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
+.filter-row select { padding: 8px 10px; background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; font-size: 13px; color: var(--text); outline: none; font-family: var(--sans); }
+.filter-row input { flex: 1; min-width: 160px; padding: 9px 12px; background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; font-size: 13px; color: var(--text); outline: none; font-family: var(--sans); }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <h1>👗 Sistema da Loja</h1>
-  <span class="header-right" id="data-hora"></span>
+<div id="db-loading">
+  <div class="spinner"></div>
+  <span>Carregando banco de dados...</span>
 </div>
 
-<div id="flash" class="flash"></div>
+<div id="flash"></div>
 
-<div class="tabs">
-  <button class="tab active" onclick="showTab('dashboard')">📊 Painel</button>
-  <button class="tab" onclick="showTab('estoque')">📦 Estoque</button>
-  <button class="tab" onclick="showTab('entrada')">⬇️ Entrada</button>
-  <button class="tab" onclick="showTab('saida')">⬆️ Saída</button>
-  <button class="tab" onclick="showTab('historico')">📋 Histórico</button>
-</div>
+<div class="app">
+  <nav class="sidebar">
+    <div class="logo">
+      <div class="logo-title">👗 Loja</div>
+      <div class="logo-sub">Sistema de Estoque</div>
+    </div>
+    <div class="nav-item active" onclick="showTab('dashboard')" id="nav-dashboard">
+      <span class="nav-icon">📊</span> Painel
+    </div>
+    <div class="nav-item" onclick="showTab('estoque')" id="nav-estoque">
+      <span class="nav-icon">📦</span> Estoque
+    </div>
+    <div class="nav-item" onclick="showTab('entrada')" id="nav-entrada">
+      <span class="nav-icon">⬇️</span> Entrada
+    </div>
+    <div class="nav-item" onclick="showTab('saida')" id="nav-saida">
+      <span class="nav-icon">⬆️</span> Saída
+    </div>
+    <div class="nav-item" onclick="showTab('historico')" id="nav-historico">
+      <span class="nav-icon">📋</span> Histórico
+    </div>
+    <div class="sidebar-clock" id="clock"></div>
+  </nav>
 
-<!-- PAINEL -->
-<div id="sec-dashboard" class="section active">
-  <div class="cards" id="cards-dashboard"></div>
-  <div class="raised">
-    <p class="section-title">⚠️ Estoque baixo ou esgotado</p>
-    <div id="low-stock"></div>
-  </div>
-  <div class="raised">
-    <p class="section-title">🕐 Últimas movimentações</p>
-    <div id="recent-moves"></div>
-  </div>
-</div>
-
-<!-- ESTOQUE -->
-<div id="sec-estoque" class="section">
-  <div class="raised">
-    <p class="section-title">Cadastrar novo produto</p>
-    <div class="form-row tri">
-      <div><label>Nome do produto</label><input id="p-nome" placeholder="Ex: Camiseta Branca"></div>
-      <div><label>Categoria</label>
-        <select id="p-cat">
-          <option>Camiseta</option><option>Calça</option><option>Vestido</option>
-          <option>Short</option><option>Saia</option><option>Jaqueta</option>
-          <option>Blusa</option><option>Acessório</option><option>Outro</option>
-        </select>
+  <main class="main">
+    <!-- DASHBOARD -->
+    <div id="sec-dashboard" class="section active">
+      <div class="page-header">
+        <div><div class="page-title">Painel Geral</div><div class="page-sub">Visão geral do seu estoque</div></div>
       </div>
-      <div><label>Tamanho</label>
-        <select id="p-tam"><option>PP</option><option>P</option><option>M</option><option>G</option><option>GG</option><option>XGG</option><option>Único</option></select>
+      <div class="cards" id="cards-dashboard"></div>
+      <div class="panel">
+        <div class="panel-title"><span>⚠</span> Produtos com estoque baixo ou esgotado</div>
+        <div id="low-stock"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title"><span>🕐</span> Últimas movimentações</div>
+        <div id="recent-moves"></div>
       </div>
     </div>
-    <div class="form-row tri">
-      <div><label>Quantidade inicial</label><input id="p-qty" type="number" min="0" value="0"></div>
-      <div><label>Preço de custo (R$)</label><input id="p-custo" type="number" min="0" step="0.01" placeholder="0,00"></div>
-      <div><label>Preço de venda (R$)</label><input id="p-venda" type="number" min="0" step="0.01" placeholder="0,00"></div>
-    </div>
-    <div><label>Cor / Descrição (opcional)</label><input id="p-desc" placeholder="Ex: Azul marinho, listrado..."></div>
-    <br>
-    <button class="btn btn-primary" onclick="addProduto()">+ Adicionar produto</button>
-  </div>
-  <div class="raised">
-    <input class="search" id="search-estoque" placeholder="🔍 Buscar por nome ou categoria..." oninput="renderEstoque()">
-    <div id="tabela-estoque"></div>
-  </div>
-</div>
 
-<!-- ENTRADA -->
-<div id="sec-entrada" class="section">
-  <div class="raised">
-    <p class="section-title">Registrar entrada de mercadoria</p>
-    <div class="form-row">
-      <div><label>Produto</label><select id="e-prod" style="width:100%"></select></div>
-      <div><label>Quantidade recebida</label><input id="e-qty" type="number" min="1" value="1"></div>
-    </div>
-    <div class="form-row">
-      <div><label>Fornecedor (opcional)</label><input id="e-forn" placeholder="Ex: Fornecedor ABC"></div>
-      <div><label>Observação</label><input id="e-obs" placeholder="Ex: Coleção verão 2025"></div>
-    </div>
-    <button class="btn btn-primary" onclick="addEntrada()">Registrar entrada</button>
-  </div>
-</div>
-
-<!-- SAÍDA -->
-<div id="sec-saida" class="section">
-  <div class="raised">
-    <p class="section-title">Registrar saída (venda / baixa)</p>
-    <div class="form-row">
-      <div><label>Produto</label><select id="s-prod" style="width:100%"></select></div>
-      <div><label>Quantidade</label><input id="s-qty" type="number" min="1" value="1"></div>
-    </div>
-    <div class="form-row">
-      <div><label>Tipo de saída</label>
-        <select id="s-tipo"><option>Venda</option><option>Troca</option><option>Descarte</option><option>Devolução</option></select>
+    <!-- ESTOQUE -->
+    <div id="sec-estoque" class="section">
+      <div class="page-header">
+        <div><div class="page-title">Estoque</div><div class="page-sub">Gerencie seus produtos</div></div>
       </div>
-      <div><label>Observação (opcional)</label><input id="s-obs" placeholder="Ex: cliente, nota..."></div>
+      <div class="panel">
+        <div class="panel-title"><span>+</span> Cadastrar produto</div>
+        <div class="form-grid g3">
+          <div class="field"><label>Nome do produto</label><input id="p-nome" placeholder="Ex: Camiseta Branca"></div>
+          <div class="field"><label>Categoria</label>
+            <select id="p-cat">
+              <option>Camiseta</option><option>Calça</option><option>Vestido</option>
+              <option>Short</option><option>Saia</option><option>Jaqueta</option>
+              <option>Blusa</option><option>Acessório</option><option>Outro</option>
+            </select>
+          </div>
+          <div class="field"><label>Tamanho</label>
+            <select id="p-tam"><option>PP</option><option>P</option><option>M</option><option>G</option><option>GG</option><option>XGG</option><option>Único</option></select>
+          </div>
+        </div>
+        <div class="form-grid g3">
+          <div class="field"><label>Qtd. inicial</label><input id="p-qty" type="number" min="0" value="0"></div>
+          <div class="field"><label>Custo (R$)</label><input id="p-custo" type="number" min="0" step="0.01" placeholder="0,00"></div>
+          <div class="field"><label>Venda (R$)</label><input id="p-venda" type="number" min="0" step="0.01" placeholder="0,00"></div>
+        </div>
+        <div class="form-grid">
+          <div class="field"><label>Cor / Descrição (opcional)</label><input id="p-desc" placeholder="Ex: Azul marinho, listrado..."></div>
+        </div>
+        <button class="btn btn-primary" onclick="addProduto()">+ Adicionar produto</button>
+      </div>
+      <div class="panel">
+        <input class="search-input" id="search-estoque" placeholder="🔍 Buscar por nome, categoria ou cor..." oninput="renderEstoque()">
+        <div class="table-wrap" id="tabela-estoque"></div>
+      </div>
     </div>
-    <button class="btn btn-primary" onclick="addSaida()">Registrar saída</button>
-  </div>
-</div>
 
-<!-- HISTÓRICO -->
-<div id="sec-historico" class="section">
-  <div class="raised">
-    <div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;align-items:center">
-      <select id="filtro-tipo" onchange="renderHistorico()" style="width:auto;padding:8px 10px;border:1px solid #ccc;border-radius:8px;font-size:14px">
-        <option value="">Todos os tipos</option>
-        <option value="Entrada">Entradas</option>
-        <option value="Saída">Saídas</option>
-      </select>
-      <input id="filtro-busca" placeholder="🔍 Buscar produto..." oninput="renderHistorico()" style="flex:1;min-width:160px;padding:9px 10px;border:1px solid #ccc;border-radius:8px;font-size:14px;outline:none">
-      <button class="btn" onclick="exportarCSV()">⬇️ Exportar CSV</button>
+    <!-- ENTRADA -->
+    <div id="sec-entrada" class="section">
+      <div class="page-header">
+        <div><div class="page-title">Entrada</div><div class="page-sub">Registrar recebimento de mercadoria</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title"><span>⬇</span> Nova entrada</div>
+        <div class="form-grid g2">
+          <div class="field"><label>Produto</label><select id="e-prod"></select></div>
+          <div class="field"><label>Quantidade</label><input id="e-qty" type="number" min="1" value="1"></div>
+        </div>
+        <div class="form-grid g2">
+          <div class="field"><label>Fornecedor (opcional)</label><input id="e-forn" placeholder="Ex: Fornecedor ABC"></div>
+          <div class="field"><label>Observação</label><input id="e-obs" placeholder="Ex: Coleção verão 2025"></div>
+        </div>
+        <button class="btn btn-primary" onclick="addEntrada()">Registrar entrada</button>
+      </div>
     </div>
-    <div id="tabela-historico"></div>
-  </div>
+
+    <!-- SAÍDA -->
+    <div id="sec-saida" class="section">
+      <div class="page-header">
+        <div><div class="page-title">Saída</div><div class="page-sub">Registrar venda ou baixa</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title"><span>⬆</span> Nova saída</div>
+        <div class="form-grid g2">
+          <div class="field"><label>Produto</label><select id="s-prod"></select></div>
+          <div class="field"><label>Quantidade</label><input id="s-qty" type="number" min="1" value="1"></div>
+        </div>
+        <div class="form-grid g2">
+          <div class="field"><label>Tipo de saída</label>
+            <select id="s-tipo"><option>Venda</option><option>Troca</option><option>Descarte</option><option>Devolução</option></select>
+          </div>
+          <div class="field"><label>Observação (opcional)</label><input id="s-obs" placeholder="Ex: cliente, nota..."></div>
+        </div>
+        <button class="btn btn-primary" onclick="addSaida()">Registrar saída</button>
+      </div>
+    </div>
+
+    <!-- HISTÓRICO -->
+    <div id="sec-historico" class="section">
+      <div class="page-header">
+        <div><div class="page-title">Histórico</div><div class="page-sub">Todas as movimentações</div></div>
+        <button class="btn" onclick="exportarCSV()">⬇️ Exportar CSV</button>
+      </div>
+      <div class="panel">
+        <div class="filter-row">
+          <select id="filtro-tipo" onchange="renderHistorico()">
+            <option value="">Todos os tipos</option>
+            <option value="Entrada">Entradas</option>
+            <option value="Saída">Saídas</option>
+          </select>
+          <input id="filtro-busca" placeholder="🔍 Buscar produto..." oninput="renderHistorico()">
+        </div>
+        <div class="table-wrap" id="tabela-historico"></div>
+      </div>
+    </div>
+  </main>
 </div>
 
 <script>
-let produtos = JSON.parse(localStorage.getItem('loja_produtos')||'[]');
-let movimentos = JSON.parse(localStorage.getItem('loja_movimentos')||'[]');
+// ─── IndexedDB ─────────────────────────────────────────────────────────────
+const DB_NAME = 'loja_estoque_db';
+const DB_VERSION = 1;
+let db = null;
 
-function save(){
-  localStorage.setItem('loja_produtos',JSON.stringify(produtos));
-  localStorage.setItem('loja_movimentos',JSON.stringify(movimentos));
-}
-
-function flash(msg,type){
-  const el=document.getElementById('flash');
-  el.className='flash '+(type==='err'?'flash-err':'flash-ok');
-  el.style.display='block';
-  el.textContent=msg;
-  setTimeout(function(){el.style.display='none'},2800);
-}
-
-function showTab(t){
-  var tabs=['dashboard','estoque','entrada','saida','historico'];
-  document.querySelectorAll('.tab').forEach(function(b,i){b.classList.toggle('active',tabs[i]===t)});
-  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active')});
-  document.getElementById('sec-'+t).classList.add('active');
-  if(t==='dashboard')renderDashboard();
-  if(t==='estoque')renderEstoque();
-  if(t==='entrada')renderSelectProd('e-prod');
-  if(t==='saida')renderSelectProd('s-prod');
-  if(t==='historico')renderHistorico();
-}
-
-function renderSelectProd(id){
-  var s=document.getElementById(id);
-  s.innerHTML=produtos.length
-    ?produtos.map(function(p,i){return'<option value="'+i+'">'+p.nome+' — '+p.tamanho+(p.desc?' ('+p.desc+')':'')+' | Estoque: '+p.qty+'</option>'}).join('')
-    :'<option>Nenhum produto cadastrado</option>';
-}
-
-function stockBadge(qty){
-  if(qty<=0)return '<span class="badge badge-out">Esgotado</span>';
-  if(qty<=5)return '<span class="badge badge-low">Estoque baixo</span>';
-  return '<span class="badge badge-ok">OK</span>';
-}
-
-function renderDashboard(){
-  var total=produtos.length;
-  var totalQty=produtos.reduce(function(a,p){return a+p.qty},0);
-  var totalCusto=produtos.reduce(function(a,p){return a+p.qty*p.custo},0);
-  var totalVenda=produtos.reduce(function(a,p){return a+p.qty*p.venda},0);
-  var totalVendas=movimentos.filter(function(m){return m.tipo==='Saída'&&m.subtipo==='Venda'}).reduce(function(a,m){return a+m.qty},0);
-
-  document.getElementById('cards-dashboard').innerHTML=
-    '<div class="card"><div class="label">Produtos cadastrados</div><div class="value">'+total+'</div></div>'+
-    '<div class="card"><div class="label">Peças em estoque</div><div class="value">'+totalQty+'</div></div>'+
-    '<div class="card"><div class="label">Valor de custo</div><div class="value">R$ '+totalCusto.toFixed(2)+'</div></div>'+
-    '<div class="card"><div class="label">Valor de venda</div><div class="value">R$ '+totalVenda.toFixed(2)+'</div></div>'+
-    '<div class="card"><div class="label">Total vendido (peças)</div><div class="value">'+totalVendas+'</div></div>';
-
-  var low=produtos.filter(function(p){return p.qty<=5});
-  document.getElementById('low-stock').innerHTML=low.length
-    ?'<table><thead><tr><th>Produto</th><th>Categoria</th><th>Tamanho</th><th>Qtd</th><th>Status</th></tr></thead><tbody>'+
-      low.map(function(p){return'<tr><td>'+p.nome+'</td><td>'+p.categoria+'</td><td>'+p.tamanho+'</td><td>'+p.qty+'</td><td>'+stockBadge(p.qty)+'</td></tr>'}).join('')+
-      '</tbody></table>'
-    :'<p class="empty">✅ Tudo com estoque suficiente!</p>';
-
-  var rec=movimentos.slice(-8).reverse();
-  document.getElementById('recent-moves').innerHTML=rec.length
-    ?'<table><thead><tr><th>Data/Hora</th><th>Tipo</th><th>Produto</th><th>Qtd</th></tr></thead><tbody>'+
-      rec.map(function(m){return'<tr><td>'+m.data+'</td><td><span class="badge '+(m.tipo==='Entrada'?'badge-in':'badge-low')+'">'+m.tipo+(m.subtipo?' / '+m.subtipo:'')+'</span></td><td>'+m.produto+'</td><td>'+m.qty+'</td></tr>'}).join('')+
-      '</tbody></table>'
-    :'<p class="empty">Nenhuma movimentação ainda.</p>';
-}
-
-function renderEstoque(){
-  var q=(document.getElementById('search-estoque').value||'').toLowerCase();
-  var list=produtos.filter(function(p){return p.nome.toLowerCase().indexOf(q)>=0||p.categoria.toLowerCase().indexOf(q)>=0||(p.desc||'').toLowerCase().indexOf(q)>=0});
-  document.getElementById('tabela-estoque').innerHTML=list.length
-    ?'<table><thead><tr><th>Nome</th><th>Categoria</th><th>Tam.</th><th>Cor/Desc.</th><th>Qtd</th><th>Custo</th><th>Venda</th><th>Margem</th><th>Status</th><th></th></tr></thead><tbody>'+
-      list.map(function(p){
-        var ri=produtos.indexOf(p);
-        var margem=p.custo>0?((p.venda-p.custo)/p.custo*100).toFixed(0)+'%':'—';
-        return'<tr><td><strong>'+p.nome+'</strong></td><td>'+p.categoria+'</td><td>'+p.tamanho+'</td><td style="color:#888">'+(p.desc||'—')+'</td><td><strong>'+p.qty+'</strong></td><td>R$ '+p.custo.toFixed(2)+'</td><td>R$ '+p.venda.toFixed(2)+'</td><td>'+margem+'</td><td>'+stockBadge(p.qty)+'</td><td><button class="btn btn-danger" onclick="deleteProduto('+ri+')">Remover</button></td></tr>';
-      }).join('')+
-      '</tbody></table>'
-    :'<p class="empty">Nenhum produto encontrado.</p>';
-}
-
-function addProduto(){
-  var nome=document.getElementById('p-nome').value.trim();
-  if(!nome){flash('Informe o nome do produto.','err');return;}
-  produtos.push({
-    nome:nome,
-    categoria:document.getElementById('p-cat').value,
-    tamanho:document.getElementById('p-tam').value,
-    qty:parseInt(document.getElementById('p-qty').value)||0,
-    custo:parseFloat(document.getElementById('p-custo').value)||0,
-    venda:parseFloat(document.getElementById('p-venda').value)||0,
-    desc:document.getElementById('p-desc').value.trim()
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains('produtos')) {
+        db.createObjectStore('produtos', { keyPath: 'id', autoIncrement: true });
+      }
+      if (!db.objectStoreNames.contains('movimentos')) {
+        db.createObjectStore('movimentos', { keyPath: 'id', autoIncrement: true });
+      }
+    };
+    req.onsuccess = e => resolve(e.target.result);
+    req.onerror = e => reject(e.target.error);
   });
-  save();
-  document.getElementById('p-nome').value='';
-  document.getElementById('p-qty').value=0;
-  document.getElementById('p-custo').value='';
-  document.getElementById('p-venda').value='';
-  document.getElementById('p-desc').value='';
-  flash('Produto cadastrado com sucesso!');
+}
+
+function dbGetAll(store) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readonly');
+    const req = tx.objectStore(store).getAll();
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function dbAdd(store, obj) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readwrite');
+    const req = tx.objectStore(store).add(obj);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function dbPut(store, obj) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readwrite');
+    const req = tx.objectStore(store).put(obj);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function dbDelete(store, key) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readwrite');
+    const req = tx.objectStore(store).delete(key);
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+  });
+}
+
+// ─── Estado ────────────────────────────────────────────────────────────────
+let produtos = [];
+let movimentos = [];
+
+async function loadAll() {
+  produtos = await dbGetAll('produtos');
+  movimentos = await dbGetAll('movimentos');
+}
+
+// ─── UI Helpers ────────────────────────────────────────────────────────────
+function flash(msg, type = 'ok') {
+  const el = document.getElementById('flash');
+  el.className = 'flash flash-' + (type === 'err' ? 'err' : 'ok');
+  el.style.display = 'block';
+  el.textContent = msg;
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.style.display = 'none', 3000);
+}
+
+function showTab(t) {
+  ['dashboard','estoque','entrada','saida','historico'].forEach(name => {
+    document.getElementById('sec-' + name).classList.toggle('active', name === t);
+    document.getElementById('nav-' + name).classList.toggle('active', name === t);
+  });
+  if (t === 'dashboard') renderDashboard();
+  if (t === 'estoque') renderEstoque();
+  if (t === 'entrada') renderSelectProd('e-prod');
+  if (t === 'saida') renderSelectProd('s-prod');
+  if (t === 'historico') renderHistorico();
+}
+
+function renderSelectProd(id) {
+  const s = document.getElementById(id);
+  s.innerHTML = produtos.length
+    ? produtos.map(p => `<option value="${p.id}">${p.nome} — ${p.tamanho}${p.desc ? ' (' + p.desc + ')' : ''} | Estoque: ${p.qty}</option>`).join('')
+    : '<option>Nenhum produto cadastrado</option>';
+}
+
+function stockBadge(qty) {
+  if (qty <= 0) return '<span class="badge badge-out">● Esgotado</span>';
+  if (qty <= 5) return '<span class="badge badge-low">● Baixo</span>';
+  return '<span class="badge badge-ok">● OK</span>';
+}
+
+function fmtMoney(v) { return 'R$ ' + (v || 0).toFixed(2).replace('.', ','); }
+
+function nowStr() {
+  return new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+}
+
+// ─── Dashboard ─────────────────────────────────────────────────────────────
+function renderDashboard() {
+  const totalQty = produtos.reduce((a, p) => a + p.qty, 0);
+  const totalCusto = produtos.reduce((a, p) => a + p.qty * (p.custo || 0), 0);
+  const totalVenda = produtos.reduce((a, p) => a + p.qty * (p.venda || 0), 0);
+  const totalVendas = movimentos.filter(m => m.tipo === 'Saída' && m.subtipo === 'Venda').reduce((a, m) => a + m.qty, 0);
+
+  document.getElementById('cards-dashboard').innerHTML = `
+    <div class="card"><div class="card-label">Produtos</div><div class="card-value">${produtos.length}</div></div>
+    <div class="card"><div class="card-label">Peças em estoque</div><div class="card-value">${totalQty}</div></div>
+    <div class="card"><div class="card-label">Valor de custo</div><div class="card-value small">${fmtMoney(totalCusto)}</div></div>
+    <div class="card"><div class="card-label">Valor de venda</div><div class="card-value small">${fmtMoney(totalVenda)}</div></div>
+    <div class="card"><div class="card-label">Peças vendidas</div><div class="card-value">${totalVendas}</div></div>
+  `;
+
+  const low = produtos.filter(p => p.qty <= 5);
+  document.getElementById('low-stock').innerHTML = low.length
+    ? `<div class="table-wrap"><table><thead><tr><th>Produto</th><th>Categoria</th><th>Tam.</th><th>Qtd</th><th>Status</th></tr></thead><tbody>` +
+      low.map(p => `<tr><td><strong>${p.nome}</strong></td><td>${p.categoria}</td><td class="mono">${p.tamanho}</td><td class="mono">${p.qty}</td><td>${stockBadge(p.qty)}</td></tr>`).join('') +
+      `</tbody></table></div>`
+    : `<p class="empty">✅ Tudo com estoque suficiente!</p>`;
+
+  const rec = [...movimentos].reverse().slice(0, 8);
+  document.getElementById('recent-moves').innerHTML = rec.length
+    ? `<div class="table-wrap"><table><thead><tr><th>Data/Hora</th><th>Tipo</th><th>Produto</th><th>Qtd</th></tr></thead><tbody>` +
+      rec.map(m => `<tr>
+        <td class="mono" style="color:var(--muted);font-size:12px">${m.data}</td>
+        <td><span class="badge ${m.tipo === 'Entrada' ? 'badge-in' : 'badge-low'}">${m.tipo}${m.subtipo ? ' / ' + m.subtipo : ''}</span></td>
+        <td>${m.produto}</td>
+        <td class="mono"><strong>${m.qty}</strong></td>
+      </tr>`).join('') +
+      `</tbody></table></div>`
+    : `<p class="empty">Nenhuma movimentação ainda.</p>`;
+}
+
+// ─── Estoque ────────────────────────────────────────────────────────────────
+function renderEstoque() {
+  const q = (document.getElementById('search-estoque').value || '').toLowerCase();
+  const list = produtos.filter(p =>
+    p.nome.toLowerCase().includes(q) ||
+    p.categoria.toLowerCase().includes(q) ||
+    (p.desc || '').toLowerCase().includes(q)
+  );
+  document.getElementById('tabela-estoque').innerHTML = list.length
+    ? `<table><thead><tr><th>Nome</th><th>Categoria</th><th>Tam.</th><th>Cor / Desc.</th><th>Qtd</th><th>Custo</th><th>Venda</th><th>Margem</th><th>Status</th><th></th></tr></thead><tbody>` +
+      list.map(p => {
+        const margem = p.custo > 0 ? ((p.venda - p.custo) / p.custo * 100).toFixed(0) + '%' : '—';
+        return `<tr>
+          <td><strong>${p.nome}</strong></td>
+          <td style="color:var(--muted)">${p.categoria}</td>
+          <td class="mono">${p.tamanho}</td>
+          <td style="color:var(--muted)">${p.desc || '—'}</td>
+          <td class="mono"><strong>${p.qty}</strong></td>
+          <td class="mono">${fmtMoney(p.custo)}</td>
+          <td class="mono">${fmtMoney(p.venda)}</td>
+          <td class="mono" style="color:var(--accent)">${margem}</td>
+          <td>${stockBadge(p.qty)}</td>
+          <td><button class="btn btn-danger btn-sm" onclick="deleteProduto(${p.id})">Remover</button></td>
+        </tr>`;
+      }).join('') +
+      `</tbody></table>`
+    : `<p class="empty">Nenhum produto encontrado.</p>`;
+}
+
+async function addProduto() {
+  const nome = document.getElementById('p-nome').value.trim();
+  if (!nome) { flash('Informe o nome do produto.', 'err'); return; }
+  const obj = {
+    nome,
+    categoria: document.getElementById('p-cat').value,
+    tamanho: document.getElementById('p-tam').value,
+    qty: parseInt(document.getElementById('p-qty').value) || 0,
+    custo: parseFloat(document.getElementById('p-custo').value) || 0,
+    venda: parseFloat(document.getElementById('p-venda').value) || 0,
+    desc: document.getElementById('p-desc').value.trim()
+  };
+  await dbAdd('produtos', obj);
+  await loadAll();
+  ['p-nome', 'p-qty', 'p-custo', 'p-venda', 'p-desc'].forEach(id => {
+    const el = document.getElementById(id);
+    el.value = id === 'p-qty' ? 0 : '';
+  });
+  flash('Produto cadastrado!');
   renderEstoque();
 }
 
-function deleteProduto(i){
-  if(!confirm('Tem certeza que deseja remover "'+produtos[i].nome+'"?'))return;
-  produtos.splice(i,1);
-  save();
+async function deleteProduto(id) {
+  const p = produtos.find(x => x.id === id);
+  if (!p || !confirm(`Remover "${p.nome}"?`)) return;
+  await dbDelete('produtos', id);
+  await loadAll();
   renderEstoque();
   flash('Produto removido.');
 }
 
-function now(){
-  return new Date().toLocaleDateString('pt-BR')+' '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-}
-
-function addEntrada(){
-  var sel=document.getElementById('e-prod');
-  if(!produtos.length){flash('Cadastre produtos primeiro.','err');return;}
-  var i=parseInt(sel.value);
-  var qty=parseInt(document.getElementById('e-qty').value)||0;
-  if(qty<=0){flash('Quantidade inválida.','err');return;}
-  produtos[i].qty+=qty;
-  movimentos.push({data:now(),tipo:'Entrada',produto:produtos[i].nome,qty:qty,obs:document.getElementById('e-obs').value,forn:document.getElementById('e-forn').value});
-  save();
-  flash('Entrada de '+qty+' peça(s) de "'+produtos[i].nome+'" registrada!');
-  document.getElementById('e-qty').value=1;
-  document.getElementById('e-obs').value='';
-  document.getElementById('e-forn').value='';
+// ─── Entrada ────────────────────────────────────────────────────────────────
+async function addEntrada() {
+  if (!produtos.length) { flash('Cadastre produtos primeiro.', 'err'); return; }
+  const idProd = parseInt(document.getElementById('e-prod').value);
+  const p = produtos.find(x => x.id === idProd);
+  if (!p) { flash('Produto não encontrado.', 'err'); return; }
+  const qty = parseInt(document.getElementById('e-qty').value) || 0;
+  if (qty <= 0) { flash('Quantidade inválida.', 'err'); return; }
+  p.qty += qty;
+  await dbPut('produtos', p);
+  await dbAdd('movimentos', {
+    data: nowStr(), tipo: 'Entrada', produto: p.nome, qty,
+    obs: document.getElementById('e-obs').value,
+    forn: document.getElementById('e-forn').value
+  });
+  await loadAll();
+  document.getElementById('e-qty').value = 1;
+  document.getElementById('e-obs').value = '';
+  document.getElementById('e-forn').value = '';
+  flash(`Entrada de ${qty} peça(s) de "${p.nome}" registrada!`);
   renderSelectProd('e-prod');
 }
 
-function addSaida(){
-  var sel=document.getElementById('s-prod');
-  if(!produtos.length){flash('Cadastre produtos primeiro.','err');return;}
-  var i=parseInt(sel.value);
-  var qty=parseInt(document.getElementById('s-qty').value)||0;
-  if(qty<=0){flash('Quantidade inválida.','err');return;}
-  if(produtos[i].qty<qty){flash('Estoque insuficiente! Disponível: '+produtos[i].qty+' peça(s).','err');return;}
-  produtos[i].qty-=qty;
-  var subtipo=document.getElementById('s-tipo').value;
-  movimentos.push({data:now(),tipo:'Saída',subtipo:subtipo,produto:produtos[i].nome,qty:qty,obs:document.getElementById('s-obs').value});
-  save();
-  flash('Saída de '+qty+' peça(s) de "'+produtos[i].nome+'" registrada!');
-  document.getElementById('s-qty').value=1;
-  document.getElementById('s-obs').value='';
+// ─── Saída ──────────────────────────────────────────────────────────────────
+async function addSaida() {
+  if (!produtos.length) { flash('Cadastre produtos primeiro.', 'err'); return; }
+  const idProd = parseInt(document.getElementById('s-prod').value);
+  const p = produtos.find(x => x.id === idProd);
+  if (!p) { flash('Produto não encontrado.', 'err'); return; }
+  const qty = parseInt(document.getElementById('s-qty').value) || 0;
+  if (qty <= 0) { flash('Quantidade inválida.', 'err'); return; }
+  if (p.qty < qty) { flash(`Estoque insuficiente! Disponível: ${p.qty} peça(s).`, 'err'); return; }
+  p.qty -= qty;
+  const subtipo = document.getElementById('s-tipo').value;
+  await dbPut('produtos', p);
+  await dbAdd('movimentos', {
+    data: nowStr(), tipo: 'Saída', subtipo, produto: p.nome, qty,
+    obs: document.getElementById('s-obs').value
+  });
+  await loadAll();
+  document.getElementById('s-qty').value = 1;
+  document.getElementById('s-obs').value = '';
+  flash(`Saída de ${qty} peça(s) de "${p.nome}" registrada!`);
   renderSelectProd('s-prod');
 }
 
-function renderHistorico(){
-  var tf=document.getElementById('filtro-tipo').value;
-  var tb=(document.getElementById('filtro-busca').value||'').toLowerCase();
-  var list=movimentos.filter(function(m){return(tf===''||m.tipo===tf)&&(tb===''||m.produto.toLowerCase().indexOf(tb)>=0)}).slice().reverse();
-  document.getElementById('tabela-historico').innerHTML=list.length
-    ?'<table><thead><tr><th>Data/Hora</th><th>Tipo</th><th>Produto</th><th>Qtd</th><th>Obs / Fornecedor</th></tr></thead><tbody>'+
-      list.map(function(m){return'<tr><td style="color:#888;white-space:nowrap">'+m.data+'</td><td><span class="badge '+(m.tipo==='Entrada'?'badge-in':'badge-low')+'">'+m.tipo+(m.subtipo?' / '+m.subtipo:'')+'</span></td><td>'+m.produto+'</td><td><strong>'+m.qty+'</strong></td><td style="color:#888">'+(m.obs||(m.forn?'Forn: '+m.forn:'')||'—')+'</td></tr>'}).join('')+
-      '</tbody></table>'
-    :'<p class="empty">Nenhuma movimentação encontrada.</p>';
+// ─── Histórico ──────────────────────────────────────────────────────────────
+function renderHistorico() {
+  const tf = document.getElementById('filtro-tipo').value;
+  const tb = (document.getElementById('filtro-busca').value || '').toLowerCase();
+  const list = [...movimentos]
+    .filter(m => (tf === '' || m.tipo === tf) && (tb === '' || m.produto.toLowerCase().includes(tb)))
+    .reverse();
+  document.getElementById('tabela-historico').innerHTML = list.length
+    ? `<table><thead><tr><th>Data/Hora</th><th>Tipo</th><th>Produto</th><th>Qtd</th><th>Obs / Fornecedor</th></tr></thead><tbody>` +
+      list.map(m => `<tr>
+        <td class="mono" style="color:var(--muted);font-size:12px;white-space:nowrap">${m.data}</td>
+        <td><span class="badge ${m.tipo === 'Entrada' ? 'badge-in' : 'badge-low'}">${m.tipo}${m.subtipo ? ' / ' + m.subtipo : ''}</span></td>
+        <td>${m.produto}</td>
+        <td class="mono"><strong>${m.qty}</strong></td>
+        <td style="color:var(--muted);font-size:12px">${m.obs || (m.forn ? 'Forn: ' + m.forn : '') || '—'}</td>
+      </tr>`).join('') +
+      `</tbody></table>`
+    : `<p class="empty">Nenhuma movimentação encontrada.</p>`;
 }
 
-function exportarCSV(){
-  if(!movimentos.length){flash('Sem dados para exportar.','err');return;}
-  var header='Data/Hora,Tipo,Subtipo,Produto,Quantidade,Observação,Fornecedor';
-  var rows=movimentos.map(function(m){
-    return [m.data,m.tipo,m.subtipo||'',m.produto,m.qty,m.obs||'',m.forn||''].map(function(v){return'"'+String(v).replace(/"/g,'""')+'"'}).join(',');
-  });
-  var csv='\uFEFF'+header+'\n'+rows.join('\n');
-  var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
-  var url=URL.createObjectURL(blob);
-  var a=document.createElement('a');
-  a.href=url;a.download='historico_loja.csv';a.click();
+function exportarCSV() {
+  if (!movimentos.length) { flash('Sem dados para exportar.', 'err'); return; }
+  const header = 'Data/Hora,Tipo,Subtipo,Produto,Quantidade,Observação,Fornecedor';
+  const rows = movimentos.map(m =>
+    [m.data, m.tipo, m.subtipo || '', m.produto, m.qty, m.obs || '', m.forn || '']
+      .map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')
+  );
+  const csv = '\uFEFF' + header + '\n' + rows.join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'historico_loja.csv'; a.click();
   URL.revokeObjectURL(url);
-  flash('CSV exportado com sucesso!');
+  flash('CSV exportado!');
 }
 
-setInterval(function(){
-  var el=document.getElementById('data-hora');
-  if(el)el.textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'})+' • '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-},1000);
+// ─── Clock ───────────────────────────────────────────────────────────────────
+setInterval(() => {
+  const el = document.getElementById('clock');
+  if (el) {
+    const d = new Date();
+    el.innerHTML =
+      d.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' }) +
+      '<br>' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  }
+}, 1000);
 
-renderDashboard();
+// ─── Init ────────────────────────────────────────────────────────────────────
+(async () => {
+  try {
+    db = await openDB();
+    await loadAll();
+    document.getElementById('db-loading').style.display = 'none';
+    renderDashboard();
+  } catch (err) {
+    document.getElementById('db-loading').innerHTML =
+      `<span style="color:var(--red)">Erro ao abrir banco de dados: ${err.message}</span>`;
+    console.error(err);
+  }
+})();
 </script>
 </body>
 </html>
